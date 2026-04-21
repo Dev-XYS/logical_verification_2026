@@ -8,3 +8,4 @@ Files associated with the Hitchhiker's Guide to Logical Verification
 
 To edit the Lean files, open the `lean` folder as a Lean 4 project [as described
 here](https://leanprover-community.github.io/install/project.html#working-on-an-existing-project).
+Link to the original [GitHub repository](github.com/lean-forward/logical_verification_2026).
