@@ -25,8 +25,9 @@ its argument, or 0 if the argument is 0. For example:
     `pred 7 = 6`
     `pred 0 = 0` -/
 
-def pred : ℕ → ℕ :=
-  sorry
+def pred : ℕ → ℕ
+  | 0 => 0
+  | Nat.succ n => n
 
 /- 1.2. Check that your function works as expected. -/
 
@@ -75,6 +76,10 @@ def simplify : AExp → AExp
   | AExp.add (AExp.num 0) e₂ => simplify e₂
   | AExp.add e₁ (AExp.num 0) => simplify e₁
   -- insert the missing cases here
+  | AExp.sub e₁ (AExp.num 0) => simplify e₁
+  | AExp.mul (AExp.num 0) e₂ => AExp.num 0
+  | AExp.mul e₁ (AExp.num 0) => AExp.num 0
+  | AExp.div (AExp.num 0) e₂ => AExp.num 0
   -- catch-all cases below
   | AExp.num i               => AExp.num i
   | AExp.var x               => AExp.var x
@@ -93,7 +98,7 @@ the property that the value of `e` after simplification is the same as the
 value of `e` before. -/
 
 theorem simplify_correct (env : String → ℤ) (e : AExp) :
-    True :=   -- replace `True` by your theorem statement
+    eval env (simplify e) = eval env e :=   -- replace `True` by your theorem statement
   sorry   -- leave `sorry` alone
 
 
@@ -102,8 +107,9 @@ theorem simplify_correct (env : String → ℤ) (e : AExp) :
 3.1 (**optional**). Define a generic `map` function that applies a function to
 every element in a list. -/
 
-def map {α : Type} {β : Type} (f : α → β) : List α → List β :=
-  sorry
+def map {α : Type} {β : Type} (f : α → β) : List α → List β
+  | List.nil => List.nil
+  | List.cons a as => List.cons (f a) (map f as)
 
 #eval map (fun n ↦ n + 10) [1, 2, 3]   -- expected: [11, 12, 13]
 
