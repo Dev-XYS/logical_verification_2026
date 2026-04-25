@@ -29,25 +29,35 @@ Section 3.3 in the Hitchhiker's Guide. -/
 
 theorem I (a : Prop) :
     a → a :=
-  sorry
+  by
+    intro ha
+    apply ha
 
 theorem K (a b : Prop) :
     a → b → b :=
-  sorry
+  by
+    intro ha hb
+    apply hb
 
 theorem C (a b c : Prop) :
     (a → b → c) → b → a → c :=
-  sorry
+  by
+    intro h hb ha
+    apply (h ha hb)
 
 theorem proj_fst (a : Prop) :
     a → a → a :=
-  sorry
+  by
+    intro ha1 ha2
+    exact ha1
 
 /- Please give a different answer than for `proj_fst`: -/
 
 theorem proj_snd (a : Prop) :
     a → a → a :=
-  sorry
+  by
+    intro ha1 ha2
+    exact ha2
 
 theorem some_nonsense (a b c : Prop) :
     (a → b → c) → a → (a → c) → b → c :=
@@ -57,7 +67,9 @@ theorem some_nonsense (a b c : Prop) :
 
 theorem contrapositive (a b : Prop) :
     (a → b) → ¬ b → ¬ a :=
-  sorry
+  by
+    intro h nb ha
+    exact nb (h ha)
 
 /- 1.3. Prove the distributivity of `∀` over `∧` using basic tactics.
 
@@ -67,7 +79,17 @@ be necessary. -/
 
 theorem forall_and {α : Type} (p q : α → Prop) :
     (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
-  sorry
+  by
+    apply Iff.intro
+    . intro h
+      apply And.intro
+      intro x
+      apply (And.left (h x))
+      intro x
+      apply (And.right (h x))
+    . intro h
+      intro x
+      apply (And.intro (And.left h x) (And.right h x))
 
 
 /- ## Question 2: Natural Numbers
@@ -79,23 +101,35 @@ theorem forall_and {α : Type} (p q : α → Prop) :
 
 theorem mul_zero (n : ℕ) :
     mul 0 n = 0 :=
-  sorry
+  by
+    induction n with
+    | zero => rfl
+    | succ n ih => simp [mul, ih, add]
 
 #check add_succ
 theorem mul_succ (m n : ℕ) :
     mul (Nat.succ m) n = add (mul m n) n :=
-  sorry
+  by
+    induction n with
+    | zero => rfl
+    | succ n ih => simp [mul, add_succ, ih, add, add_assoc]
 
 /- 2.2. Prove commutativity and associativity of multiplication using the
 `induction` tactic. Choose the induction variable carefully. -/
 
 theorem mul_comm (m n : ℕ) :
     mul m n = mul n m :=
-  sorry
+  by
+    induction n with
+    | zero => simp [mul, mul_zero]
+    | succ n ih => simp [mul, mul_succ, ih, add_comm]
 
 theorem mul_assoc (l m n : ℕ) :
     mul (mul l m) n = mul l (mul m n) :=
-  sorry
+  by
+    induction n with
+    | zero => simp [mul]
+    | succ n ih => simp [mul, ih, mul_add]
 
 /- 2.3. Prove the symmetric variant of `mul_add` using `rw`. To apply
 commutativity at a specific position, instantiate the rule by passing some
@@ -103,7 +137,8 @@ arguments (e.g., `mul_comm _ l`). -/
 
 theorem add_mul (l m n : ℕ) :
     add (mul n l) (mul n m) = mul (add l m) n :=
-  sorry
+  by
+    rw [mul_comm _ n, mul_add]
 
 
 /- ## Question 3 (**optional**): Intuitionistic Logic
