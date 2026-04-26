@@ -21,41 +21,72 @@ namespace LoVe
 
 theorem I (a : Prop) :
     a → a :=
-  sorry
+  assume ha : a
+  show a from ha
 
 theorem K (a b : Prop) :
     a → b → b :=
-  sorry
+  assume ha : a
+  assume hb : b
+  show b from hb
 
 theorem C (a b c : Prop) :
     (a → b → c) → b → a → c :=
-  sorry
+  assume h : a -> b -> c
+  assume hb : b
+  assume ha : a
+  show c from h ha hb
 
 theorem proj_fst (a : Prop) :
     a → a → a :=
-  sorry
+  assume ha1 : a
+  assume ha2 : a
+  show a from ha1
 
 /- Please give a different answer than for `proj_fst`. -/
 
 theorem proj_snd (a : Prop) :
     a → a → a :=
-  sorry
+  assume ha1 : a
+  assume ha2 : a
+  show a from ha2
 
 theorem some_nonsense (a b c : Prop) :
     (a → b → c) → a → (a → c) → b → c :=
-  sorry
+  assume h1 : a -> b -> c
+  assume ha : a
+  assume h2 : a -> c
+  assume hb : b
+  show c from h2 ha
 
 /- 1.2. Supply a structured proof of the contraposition rule. -/
 
 theorem contrapositive (a b : Prop) :
     (a → b) → ¬ b → ¬ a :=
-  sorry
+  assume h : a -> b
+  assume nb : ¬ b
+  assume ha : a
+  have hb := h ha
+  show False from nb hb
 
 /- 1.3. Supply a structured proof of the distributivity of `∀` over `∧`. -/
 
 theorem forall_and {α : Type} (p q : α → Prop) :
     (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
-  sorry
+  Iff.intro
+    (assume h : ∀ (x : α), p x ∧ q x
+     have hp : ∀ (x : α), p x :=
+       (fix x : α
+        show p x from (h x).left)
+     have hq : ∀ (x : α), q x :=
+       (fix x : α
+        show q x from (h x).right)
+     show (∀ (x : α), p x) ∧ ∀ (x : α), q x from And.intro hp hq)
+    (assume h : (∀ (x : α), p x) ∧ ∀ (x : α), q x
+     have hp : ∀ (x : α), p x := h.left
+     have hq : ∀ (x : α), q x := h.right
+     fix x : α
+     show p x ∧ q x from And.intro (hp x) (hq x))
 
 /- 1.4 (**optional**). Supply a structured proof of the following property,
 which can be used to pull a `∀` quantifier past an `∃` quantifier. -/
@@ -81,7 +112,15 @@ Hint: This is a difficult question. You might need the tactics `simp` and
 
 theorem binomial_square (a b : ℕ) :
     (a + b) * (a + b) = a * a + 2 * a * b + b * b :=
-  sorry
+  calc
+    (a + b) * (a + b) = a * (a + b) + b * (a + b) :=
+      by rw [add_mul]
+    _ = a * a + a * b + b * a + b * b :=
+      by simp [mul_add, add_assoc]
+    _ = a * a + a * b + a * b + b * b :=
+      by rw [mul_comm b a]
+    _ = a * a + 2 * a * b + b * b :=
+      by simp [add_assoc, mul_assoc, <-Nat.two_mul]
 
 /- 2.2 (**optional**). Prove the same argument again, this time as a structured
 proof, with `have` steps corresponding to the `calc` equations. Try to reuse as
@@ -102,7 +141,11 @@ axiom All.one_point_wrong {α : Type} (t : α) (P : α → Prop) :
 
 theorem All.proof_of_False :
     False :=
-  sorry
+  by
+    let P := fun x : Nat => True
+    have h : ∀x : Nat, x = 0 ∧ P x := Iff.mpr (All.one_point_wrong 0 P) True.intro
+    have habsurd : 1 = 0 := (h 1).left
+    injection habsurd
 
 /- 3.2 (**optional**). Prove that the following wrong formulation of the
 one-point rule for `∃` is inconsistent, using a structured proof. -/
@@ -112,6 +155,10 @@ axiom Exists.one_point_wrong {α : Type} (t : α) (P : α → Prop) :
 
 theorem Exists.proof_of_False :
     False :=
-  sorry
+  by
+    let P := fun x : Nat => False
+    have h : 1 = 0 -> False := (by intro eq; injection eq)
+    have h : ∃x : Nat, x = 0 -> P x := Exists.intro 1 h
+    exact Iff.mp (Exists.one_point_wrong 0 P) h
 
 end LoVe
