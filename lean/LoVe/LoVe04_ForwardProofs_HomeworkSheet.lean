@@ -39,14 +39,25 @@ Hint: There is an easy way. -/
 
 theorem about_Impl_term :
     ∀a b : Prop, ¬ a ∨ b → a → b :=
-  sorry
+  fun a b h ha =>
+    match h with
+    | Or.inl h => False.elim (h ha)
+    | Or.inr h => h
 
 /- 1.2. Prove the same theorem again, this time by providing a
 structured proof, with `fix`, `assume`, and `show`. -/
 
 theorem about_Impl_struct :
     ∀a b : Prop, ¬ a ∨ b → a → b :=
-  sorry
+  fix a b : Prop
+  assume h : ¬ a ∨ b
+  assume ha : a
+  show b from
+    Or.elim h
+      (assume na : ¬ a
+       show b from False.elim (na ha))
+      (assume hb : b
+       show b from hb)
 
 
 /- ## Question 2: More Logic Puzzles
@@ -72,7 +83,7 @@ Hint: There is an easy way. -/
 
 theorem weak_peirce_term :
     ∀a b : Prop, ((((a → b) → a) → a) → b) → b :=
-  sorry
+  fun a b f => f (fun g => g (fun ha => f (fun _ => ha)))
 
 /- 2.2. Prove the same theorem again, this time by providing a structured
 proof, with `fix`, `assume`, and `show`. -/
