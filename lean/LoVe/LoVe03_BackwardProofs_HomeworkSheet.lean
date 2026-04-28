@@ -177,6 +177,17 @@ missing implications, exploiting the three theorems we already have. -/
 #check EM_of_DN
 
 -- enter your solution here
+theorem EM_of_Peirce :
+    Peirce → ExcludedMiddle
+  | p => EM_of_DN (DN_of_Peirce p)
+
+theorem Peirce_of_DN :
+    DoubleNegation → Peirce
+  | dn => Peirce_of_EM (EM_of_DN dn)
+
+theorem DN_of_EM :
+    ExcludedMiddle → DoubleNegation
+  | em => DN_of_Peirce (Peirce_of_EM em)
 
 end BackwardProofs
 

@@ -61,7 +61,9 @@ theorem proj_snd (a : Prop) :
 
 theorem some_nonsense (a b c : Prop) :
     (a → b → c) → a → (a → c) → b → c :=
-  sorry
+  by
+    intro _ ha h _
+    exact h ha
 
 /- 1.2. Prove the contraposition rule using basic tactics. -/
 
