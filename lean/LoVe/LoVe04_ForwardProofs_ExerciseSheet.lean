@@ -93,7 +93,10 @@ which can be used to pull a `∀` quantifier past an `∃` quantifier. -/
 
 theorem forall_exists_of_exists_forall {α : Type} (p : α → α → Prop) :
     (∃x, ∀y, p x y) → (∀y, ∃x, p x y) :=
-  sorry
+  assume h : ∃x, ∀y, p x y
+  fix y : α
+  match h with  -- Could be better if one could use `obtain`
+  | ⟨x, hx⟩ => Exists.intro x (hx y)
 
 
 /- ## Question 2: Chain of Equalities
@@ -128,7 +131,16 @@ much of the above proof idea as possible, proceeding mechanically. -/
 
 theorem binomial_square₂ (a b : ℕ) :
     (a + b) * (a + b) = a * a + 2 * a * b + b * b :=
-  sorry
+  have eq1 : (a + b) * (a + b) = a * (a + b) + b * (a + b) :=
+    by rw [add_mul]
+  have eq2 : a * (a + b) + b * (a + b) = a * a + a * b + b * a + b * b :=
+    by simp [mul_add, add_assoc]
+  have eq3 : a * a + a * b + b * a + b * b = a * a + a * b + a * b + b * b :=
+    by rw [mul_comm b a]
+  have eq4 : a * a + a * b + a * b + b * b = a * a + 2 * a * b + b * b :=
+    by simp [add_assoc, mul_assoc, <-Nat.two_mul]
+  show _
+    by simp [eq1, eq2, eq3, eq4]
 
 
 /- ## Question 3 (**optional**): One-Point Rules
